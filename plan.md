@@ -1,20 +1,20 @@
-# TiaRa: Multi-Modal Agentic Desktop Assistant
+# ComrAde: Multi-Modal Agentic Desktop Assistant
 
 ## Goal Description
-Build a multi-modal, agentic desktop assistant ("TiaRa") that evolves through 7 phases, starting from a basic voice assistant to a fully autonomous, multi-agent system with screen understanding, long-term memory, and full computer control. The system will use Python for the core logic, React/Electron for the UI, and integrate various ML models for speech, vision, and reasoning.
+Build a multi-modal, agentic desktop assistant ("ComrAde") that evolves through 7 phases, starting from a basic voice assistant to a fully autonomous, multi-agent system with screen understanding, long-term memory, and full computer control. The system will use Python for the core logic, React/Electron for the UI, and integrate various ML models for speech, vision, and reasoning.
 
 ---
 
 ## Phase-Wise Execution Plan
 
 ### Phase 1: Voice Assistant (Currently Implementing)
-* Wake word detection ("TiaRa")
+* Wake word detection ("ComrAde")
 * Speech-to-text
 * Natural conversation
 * Text-to-speech with a realistic voice
 
 **Example Interaction:**
-- You: "TiaRa" -> Assistant wakes.
+- You: "ComrAde" -> Assistant wakes.
 - You: "Open VS Code." -> VS Code launches.
 - You: "Search for cybersecurity internships." -> Browser opens with the search.
 
@@ -32,7 +32,7 @@ Your assistant can:
 
 ### Phase 3: Vision (Camera)
 * Captures a camera frame and responds to visual questions.
-* E.g., "TiaRa, look at my desk. What do you see?" or "Is someone behind me?"
+* E.g., "ComrAde, look at my desk. What do you see?" or "Is someone behind me?"
 * *Note: This will always require explicit permission to access the camera.*
 * **Tech**: OpenCV, Vision-capable LLMs (e.g., LLaVA, GPT-4o).
 
@@ -42,7 +42,7 @@ Instead of only controlling the computer blindly, it understands what’s on the
 * E.g., "Click the green button." It identifies the button visually and clicks it.
 
 ### Phase 5: Long-Term Memory
-TiaRa remembers things like:
+ComrAde remembers things like:
 * Your projects, coding style, frequently used apps.
 * Daily routine, preferred browser, files you work on.
 * Over time it becomes more personalized.
@@ -50,7 +50,7 @@ TiaRa remembers things like:
 
 ### Phase 6: Autonomous Agents
 You could say: "Find the best laptop under ₹80,000, compare five options, make an Excel sheet, and email it to me."
-TiaRa would:
+ComrAde would:
 1. Search online.
 2. Compare products.
 3. Create a spreadsheet.

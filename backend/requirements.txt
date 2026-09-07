@@ -1,4 +1,9 @@
-openai==1.14.0
+openai>=2.45.0
 SpeechRecognition==3.10.3
 pyaudio==0.2.14
 openai-whisper
+pyautogui==0.9.54
+edge-tts
+ddgs
+python-dotenv
+PyQt6

@@ -3,13 +3,39 @@ import subprocess
 import speech_recognition as sr
 import whisper
 import warnings
+import re
+
+CONTRACTIONS = {
+    r"\bI'm\b": "I am", r"\bi'm\b": "I am",
+    r"\bI've\b": "I have", r"\bI'd\b": "I would", r"\bI'll\b": "I will",
+    r"\bYou're\b": "You are", r"\byou're\b": "you are",
+    r"\bYou've\b": "You have", r"\bYou'll\b": "You will",
+    r"\bHe's\b": "He is", r"\bShe's\b": "She is", r"\bIt's\b": "It is", r"\bit's\b": "it is",
+    r"\bWe're\b": "We are", r"\bThey're\b": "They are", r"\bThat's\b": "That is", r"\bWhat's\b": "What is",
+    r"\bwho's\b": "who is", r"\bWho's\b": "Who is",
+    r"\bDon't\b": "Do not", r"\bdon't\b": "do not",
+    r"\bDoesn't\b": "Does not", r"\bdoesn't\b": "does not",
+    r"\bDidn't\b": "Did not", r"\bdidn't\b": "did not",
+    r"\bCan't\b": "Cannot", r"\bcan't\b": "cannot",
+    r"\bWon't\b": "Will not", r"\bwon't\b": "will not",
+    r"\bWouldn't\b": "Would not", r"\bwouldn't\b": "would not",
+    r"\bShouldn't\b": "Should not", r"\bshouldn't\b": "should not",
+    r"\bCouldn't\b": "Could not", r"\bcouldn't\b": "could not",
+    r"\bIsn't\b": "Is not", r"\bisn't\b": "is not",
+    r"\bAren't\b": "Are not", r"\baren't\b": "are not",
+    r"\bWasn't\b": "Was not", r"\bwasn't\b": "was not",
+    r"\bWeren't\b": "Were not", r"\bweren't\b": "were not",
+    r"\bHaven't\b": "Have not", r"\bhaven't\b": "have not",
+    r"\bHasn't\b": "Has not", r"\bhasn't\b": "has not",
+    r"\bHadn't\b": "Had not", r"\bhadn't\b": "had not"
+}
 
 # Suppress some common warnings from PyTorch/Whisper about FP16
 warnings.filterwarnings("ignore", category=UserWarning)
 
 print("Loading local Whisper model (this may take a few seconds on the first run)...")
-# "base" model is a good tradeoff for speed and accuracy on M2
-whisper_model = whisper.load_model("base")
+# "base.en" provides the best balance of extremely high accuracy and fast M2 speed
+whisper_model = whisper.load_model("base.en")
 print("Whisper model loaded.")
 
 def speak(text: str):
@@ -18,11 +44,20 @@ def speak(text: str):
     """
     # Clean the text slightly to avoid breaking the shell command
     clean_text = text.replace('"', '').replace("'", "")
-    print(f"TiaRa says: {text}")
-    # We use 'Samantha' as a default voice, but you can change this
-    subprocess.run(["say", "-v", "Samantha", clean_text])
+    
+    # Force expand all contractions since Llama 3 keeps trying to use them
+    for pattern, replacement in CONTRACTIONS.items():
+        clean_text = re.sub(pattern, replacement, clean_text)
+        
+    print(f"ComrAde says: {text}")
+    
+    # Generate speech using ultra-realistic Microsoft Edge Neural TTS (Global Female)
+    subprocess.run(["edge-tts", "--voice", "en-US-AriaNeural", "--text", clean_text, "--write-media", "temp.mp3"], stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+    
+    # Play the file natively on macOS
+    subprocess.run(["afplay", "temp.mp3"])
 
-def listen_for_wake_word(recognizer: sr.Recognizer, microphone: sr.Microphone, wake_word: str = "tiara") -> bool:
+def listen_for_wake_word(recognizer: sr.Recognizer, microphone: sr.Microphone, wake_word: str = "comrade") -> bool:
     """
     Listens in the background for the wake word using lightweight SpeechRecognition.
     """
@@ -53,11 +88,12 @@ def listen_and_transcribe(recognizer: sr.Recognizer, microphone: sr.Microphone) 
     """
     print("\nListening for your command...")
     with microphone as source:
-        # Play a system sound to indicate the assistant is listening
-        os.system('afplay /System/Library/Sounds/Ping.aiff')
+        # Play a system sound to indicate the assistant is listening (Disabled since she now says 'Yes Boss!')
+        # os.system('afplay /System/Library/Sounds/Ping.aiff')
         recognizer.adjust_for_ambient_noise(source, duration=0.5)
         try:
-            audio = recognizer.listen(source, timeout=5, phrase_time_limit=10)
+            # Removed phrase_time_limit so she doesn't cut you off mid-sentence
+            audio = recognizer.listen(source, timeout=5, phrase_time_limit=None)
         except sr.WaitTimeoutError:
             print("Listening timed out.")
             return ""
